@@ -299,7 +299,7 @@ public:
         nPruneAfterHeight = 1000;
 
         //todo: first argument is current epoch time. this should be epoch time of alpha release, to be fair. change later
-        genesis = CreateGenesisBlock(1515002093, 388550749, 0x1e0ffff0, 1, 50 * COIN);
+        genesis = CreateGenesisBlock(1515002093, 388550749, 0x1e0ffff0, 1, 69 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
         assert(consensus.hashGenesisBlock == uint256S("0x279f0fda784164aebbface8db434a8801748be987edb585d8025e58379d1b54f"));
         assert(genesis.hashMerkleRoot == uint256S("0x3ead103523ad8f9bfc8365c7b5ddb6f10c731c6274730e88bcaa2c74606dd4bb"));
@@ -330,7 +330,7 @@ public:
         base58Prefixes[EXT_PUBLIC_KEY] = {0x04, 0x35, 0x87, 0xCF};
         base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x35, 0x83, 0x94};
 
-        bech32_hrp = "rgrlc";
+        //bech32_hrp = "rgrlc";
     }
 };
 
