@@ -1138,7 +1138,7 @@ CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
 
 int blockSize = 69;        
     if (nHeight == 1)
-        blockSize = 600000;
+        blockSize = 69;
         
 	// Adjust block size to 69 coins per block
     CAmount nSubsidy = blockSize * COIN;
