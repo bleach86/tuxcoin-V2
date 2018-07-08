@@ -28,7 +28,7 @@ packages:
 - "ca-certificates"
 - "python"
 remotes:
-- "url": "https://github.com/TuxcoinOrg/Tuxcoin.git"
+- "url": "https://github.com/bleach86/tuxcoin-V2.git"
   "dir": "tuxcoin"
 files: []
 script: |
