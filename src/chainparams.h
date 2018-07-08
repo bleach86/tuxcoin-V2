@@ -80,9 +80,9 @@ public:
     const ChainTxData& TxData() const { return chainTxData; }
     void UpdateVersionBitsParameters(Consensus::DeploymentPos d, int64_t nStartTime, int64_t nTimeout);
     int GetPoWAlgo(int nHeight) const {
-        if (strNetworkID == CBaseChainParams::TESTNET && nHeight > 20){
-            return ALGO_ALLIUM ;
-        } else if(strNetworkID == CBaseChainParams::MAIN && nHeight > 58670){ // Approx 19:00 2018-02-16 UTC
+        if(strNetworkID == CBaseChainParams::MAIN && nHeight > 15000){
+            return ALGO_ALLIUM;
+        } else if(strNetworkID == CBaseChainParams::TESTNET && nHeight > 20){
             return ALGO_ALLIUM;
         } else {
             return ALGO_SCRYPT;
