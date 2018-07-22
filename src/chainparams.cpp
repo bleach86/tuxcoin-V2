@@ -131,7 +131,7 @@ public:
 
         // Note that of those with the service bits flag, most only support a subset of possible options
         //Put seed nodes here
-        //vSeeds.emplace_back("dnsseed.brennanmcdonald.io", true);
+        vSeeds.emplace_back("dnsseed.tuxtoke.life", true);
         //vSeeds.emplace_back("dnsseed.rshaw.space", true);
         //vSeeds.emplace_back("dnsseed.garli.co.in", true);
 
