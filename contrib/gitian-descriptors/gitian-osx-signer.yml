@@ -7,7 +7,7 @@ architectures:
 packages:
 - "faketime"
 remotes:
-- "url": "https://github.com/TuxcoinOrg/tuxcoin-detached-sigs.git"
+- "url": "https://github.com/bleach86/tuxcoin-detached-sigs.git"
   "dir": "signature"
 files:
 - "tuxcoin-osx-unsigned.tar.gz"
