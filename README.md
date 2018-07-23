@@ -11,12 +11,12 @@ Development Process
 
 The `master` branch is regularly built and tested, but is not guaranteed to be
 completely stable. 
-[Tags](https://github.com/tuxcoinorg/tuxcoin/tags) are created
+[Tags](https://github.com/bleach86/tuxcoin-V2/tags) are created
 regularly to indicate new official, stable release versions of Tuxcoin Core.
 
 The contribution workflow is described in [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Developer Discord can be found [Here](https://discord.gg/Vp4Xz26).
+Developer Discord can be found [Here](https://discord.gg/NwAsQZU).
 
 Testing
 -------
