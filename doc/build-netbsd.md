@@ -25,7 +25,7 @@ python27
 
 Download the source code:
 ```
-git clone https://github.com/TuxcoinOrg/Tuxcoin
+git clone https://github.com/bleach86/tuxcoin-V2
 ```
 
 See [dependencies.md](dependencies.md) for a complete overview.
