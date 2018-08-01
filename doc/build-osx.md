@@ -33,10 +33,10 @@ NOTE: Building with Qt4 is still supported, however, could result in a broken UI
 Build Tuxcoin Core
 ------------------------
 
-1. Clone the tuxcoin source code and cd into `tuxcoin`
+1. Clone the tuxcoin source code and cd into `tuxcoin-V2`
 
-        git clone https://github.com/TuxcoinOrg/Tuxcoin
-        cd tuxcoin
+        git clone https://github.com/bleach86/tuxcoin-V2
+        cd tuxcoin-V2
 
 2.  Build tuxcoin-core:
 
