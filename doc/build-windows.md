@@ -105,8 +105,8 @@ This means you cannot use a directory that located directly on the host Windows 
 The next three steps are an example of how to acquire the source in an appropriate way.
 
     cd /usr/src
-    sudo git clone https://github.com/TuxcoinOrg/Tuxcoin.git
-    sudo chmod -R a+rw tuxcoin
+    sudo git clone https://github.com/bleach86/tuxcoin-V2
+    sudo chmod -R a+rw tuxcoin-V2
 
 Once the source code is ready the build steps are below.
 
@@ -135,8 +135,8 @@ This means you cannot use a directory that located directly on the host Windows 
 The next three steps are an example of how to acquire the source in an appropriate way.
 
     cd /usr/src
-    sudo git clone https://github.com/TuxcoinOrg/Tuxcoin.git
-    sudo chmod -R a+rw Tuxcoin
+    sudo git clone https://github.com/bleach86/tuxcoin-V2
+    sudo chmod -R a+rw tuxcoin-V2
 
 Then build using:
 
