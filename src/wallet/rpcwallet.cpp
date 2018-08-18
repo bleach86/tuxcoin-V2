@@ -441,7 +441,7 @@ static void SendMoney(CWallet * const pwallet, const CTxDestination &address, CA
     }
 }
 
-UniValue yak(const JSONRPCRequest& request)
+UniValue sendmessage(const JSONRPCRequest& request)
 {
     CWallet * const pwallet = GetWalletForJSONRPCRequest(request);
     if (!EnsureWalletIsAvailable(pwallet, request.fHelp)) {
@@ -449,15 +449,15 @@ UniValue yak(const JSONRPCRequest& request)
     }
     if (request.fHelp || request.params.size() != 1)
         throw std::runtime_error(
-            "yak \"msg\" amount\n"
+            "sendmessage \"msg\" amount\n"
             "\nPlace any data on the blockchain.\n"
             + HelpRequiringPassphrase(pwallet) +
             "\nArguments:\n"
-            "1. \"yak\"                (string, optional) Add an optional message to the blockchain\n"
+            "1. \"sendmessage\"                (string, optional) Add an optional message to the blockchain\n"
             "\nResult:\n"
             "\"txid\"                  (string) The transaction id.\n"
             "\nExamples:\n"
-            + HelpExampleCli("yak", "\"LEr4HnaefWYHbMGXcFp2Po1NPRUeIk8km2\"")
+            + HelpExampleCli("sendmessage", "\"LEr4HnaefWYHbMGXcFp2Po1NPRUeIk8km2\"")
         );
     std::string dataMsg = request.params[0].get_str();
     static const char* const lut = "0123456789ABCDEF";
@@ -3667,7 +3667,7 @@ static const CRPCCommand commands[] =
     { "wallet",             "walletpassphrase",         &walletpassphrase,         {"passphrase","timeout"} },
     { "wallet",             "removeprunedfunds",        &removeprunedfunds,        {"txid"} },
     { "wallet",             "rescanblockchain",         &rescanblockchain,         {"start_height", "stop_height"} },
-    { "wallet",             "yak",                      &yak,                      {"data"} }, 
+    { "wallet",             "sendmessage",              &sendmessage,              {"data"} }, 
     { "generating",         "generate",                 &generate,                 {"nblocks","maxtries"} },
 };
 
