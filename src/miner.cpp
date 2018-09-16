@@ -5,6 +5,7 @@
 
 #include <miner.h>
 
+#include <base58.h>
 #include <amount.h>
 #include <chain.h>
 #include <chainparams.h>
@@ -163,9 +164,31 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     coinbaseTx.vin.resize(1);
     coinbaseTx.vin[0].prevout.SetNull();
     coinbaseTx.vout.resize(1);
+    // TODO: Add payment to dev fee if dev fee block
+
+    CAmount nStandardPayment = GetBlockSubsidy(nHeight, chainparams);
+    CAmount nDevPayment = 0;
+    if(chainparams.IsDevFeeBlock(nHeight)){
+        nDevPayment = GetDevFee(nHeight, chainparams);
+        nStandardPayment -= nDevPayment;
+    }
+
     coinbaseTx.vout[0].scriptPubKey = scriptPubKeyIn;
-    coinbaseTx.vout[0].nValue = nFees + GetBlockSubsidy(nHeight, chainparams.GetConsensus());
+    coinbaseTx.vout[0].nValue = nFees + nStandardPayment;
     coinbaseTx.vin[0].scriptSig = CScript() << nHeight << OP_0;
+
+    if(nDevPayment != 0) {
+        CTxDestination destination = DecodeDestination("TKCQwhtJAgMnF7PUr8UuPXy2VfSeJunfjG");
+        if (!IsValidDestination(destination)) {
+            throw std::runtime_error("invalid TX output address");
+        }
+        CScript scriptPubKey = GetScriptForDestination(destination);
+
+        // construct TxOut, append to transaction output list
+        CTxOut txout(nDevPayment, scriptPubKey);
+        coinbaseTx.vout.push_back(txout);
+    }
+
     pblock->vtx[0] = MakeTransactionRef(std::move(coinbaseTx));
     pblocktemplate->vchCoinbaseCommitment = GenerateCoinbaseCommitment(*pblock, pindexPrev, chainparams.GetConsensus());
     pblocktemplate->vTxFees[0] = -nFees;

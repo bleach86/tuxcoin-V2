@@ -6,6 +6,7 @@
 #include <validation.h>
 
 #include <arith_uint256.h>
+#include <base58.h>
 #include <chain.h>
 #include <chainparams.h>
 #include <checkpoints.h>
@@ -1129,17 +1130,37 @@ bool ReadBlockFromDisk(CBlock& block, const CBlockIndex* pindex, const Consensus
     return true;
 }
 
-CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
+CAmount GetDevFee(int nHeight, const CChainParams& chainparams)
 {
+    Consensus::Params consensusParams = chainparams.GetConsensus();
     int halvings = nHeight / consensusParams.nSubsidyHalvingInterval;
     // Force block reward to zero when right shift is undefined.
     if (halvings >= 64)
         return 0;
 
-int blockSize = 69;        
+    CAmount nSubsidy = 86400 * COIN;
+
+    // Subsidy is cut in half every 210,000 blocks which will occur approximately every 4 years.
+    nSubsidy >>= halvings;
+    return nSubsidy;
+}
+
+CAmount GetBlockSubsidy(int nHeight, const CChainParams& chainparams)
+{
+    Consensus::Params consensusParams = chainparams.GetConsensus();
+    int halvings = nHeight / consensusParams.nSubsidyHalvingInterval;
+    // Force block reward to zero when right shift is undefined.
+    if (halvings >= 64)
+        return 0;
+
+    int blockSize = 69;
     if (nHeight == 1)
         blockSize = 69;
-        
+
+    if(chainparams.IsDevFeeBlock(nHeight)) {
+        blockSize += GetDevFee(nHeight, chainparams);
+    }
+
 	// Adjust block size to 69 coins per block
     CAmount nSubsidy = blockSize * COIN;
 
@@ -1965,12 +1986,40 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
     int64_t nTime3 = GetTimeMicros(); nTimeConnect += nTime3 - nTime2;
     LogPrint(BCLog::BENCH, "      - Connect %u transactions: %.2fms (%.3fms/tx, %.3fms/txin) [%.2fs (%.2fms/blk)]\n", (unsigned)block.vtx.size(), MILLI * (nTime3 - nTime2), MILLI * (nTime3 - nTime2) / block.vtx.size(), nInputs <= 1 ? 0 : MILLI * (nTime3 - nTime2) / (nInputs-1), nTimeConnect * MICRO, nTimeConnect * MILLI / nBlocksTotal);
 
-    CAmount blockReward = nFees + GetBlockSubsidy(pindex->nHeight, chainparams.GetConsensus());
+    CAmount blockReward = nFees + GetBlockSubsidy(pindex->nHeight, chainparams);
     if (block.vtx[0]->GetValueOut() > blockReward)
         return state.DoS(100,
                          error("ConnectBlock(): coinbase pays too much (actual=%d vs limit=%d)",
                                block.vtx[0]->GetValueOut(), blockReward),
                                REJECT_INVALID, "bad-cb-amount");
+    // TODO: Validate dev fee goes to correct address
+    if(chainparams.IsDevFeeBlock(pindex->nHeight)) {
+        CAmount nDevAmount = GetDevFee(pindex->nHeight, chainparams);
+        CAmount nStandardAmount = blockReward - nDevAmount;
+        const CTransaction &tx = *(block.vtx[0]);
+        if(tx.vout[0].nValue > nStandardAmount)
+            return state.DoS(100,
+                         error("ConnectBlock(): coinbase pays miner too much (actual=%d vs limit=%d)",
+                               tx.vout[0].nValue, nStandardAmount),
+                               REJECT_INVALID, "bad-cb-miner-amount");
+
+        if(tx.vout[1].nValue > nDevAmount)
+            return state.DoS(100,
+                         error("ConnectBlock(): coinbase pays dev too much (actual=%d vs limit=%d)",
+                               tx.vout[1].nValue, nDevAmount),
+                               REJECT_INVALID, "bad-cb-dev-amount");
+
+        CTxDestination destination = DecodeDestination("TKCQwhtJAgMnF7PUr8UuPXy2VfSeJunfjG");
+        if (!IsValidDestination(destination)) {
+            throw std::runtime_error("invalid TX output address");
+        }
+        CScript scriptPubKey = GetScriptForDestination(destination);
+        if(HexStr(tx.vout[1].scriptPubKey) != HexStr(scriptPubKey))
+            return state.DoS(100,
+                         error("ConnectBlock(): coinbase dev fee address incorrect (actual=%s vs expected=%s)",
+                               HexStr(tx.vout[1].scriptPubKey), HexStr(scriptPubKey)),
+                               REJECT_INVALID, "bad-cb-dev-address");
+    }
 
     if (!control.Wait())
         return state.DoS(100, error("%s: CheckQueue failed", __func__), REJECT_INVALID, "block-validation-failed");
