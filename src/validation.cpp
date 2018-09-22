@@ -1130,7 +1130,7 @@ bool ReadBlockFromDisk(CBlock& block, const CBlockIndex* pindex, const Consensus
     return true;
 }
 
-CAmount GetDevFee(int nHeight, const CChainParams& chainparams)
+CAmount GetDonationSubsidy(int nHeight, const CChainParams& chainparams)
 {
     Consensus::Params consensusParams = chainparams.GetConsensus();
     int halvings = nHeight / consensusParams.nSubsidyHalvingInterval;
@@ -1158,7 +1158,7 @@ CAmount GetBlockSubsidy(int nHeight, const CChainParams& chainparams)
         blockSize = 69;
 
     if(chainparams.IsDevFeeBlock(nHeight)) {
-        blockSize += GetDevFee(nHeight, chainparams);
+        blockSize += GetDonationSubsidy(nHeight, chainparams);
     }
 
 	// Adjust block size to 69 coins per block
@@ -1994,8 +1994,8 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
                                REJECT_INVALID, "bad-cb-amount");
     // TODO: Validate dev fee goes to correct address
     if(chainparams.IsDevFeeBlock(pindex->nHeight)) {
-        CAmount nDevAmount = GetDevFee(pindex->nHeight, chainparams);
-        CAmount nStandardAmount = blockReward - nDevAmount;
+        CAmount nDonationAmount = GetDonationSubsidy(pindex->nHeight, chainparams);
+        CAmount nStandardAmount = blockReward - nDonationAmount;
         const CTransaction &tx = *(block.vtx[0]);
         if(tx.vout[0].nValue > nStandardAmount)
             return state.DoS(100,
@@ -2003,10 +2003,10 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
                                tx.vout[0].nValue, nStandardAmount),
                                REJECT_INVALID, "bad-cb-miner-amount");
 
-        if(tx.vout[1].nValue > nDevAmount)
+        if(tx.vout[1].nValue > nDonationAmount)
             return state.DoS(100,
                          error("ConnectBlock(): coinbase pays dev too much (actual=%d vs limit=%d)",
-                               tx.vout[1].nValue, nDevAmount),
+                               tx.vout[1].nValue, nDonationAmount),
                                REJECT_INVALID, "bad-cb-dev-amount");
 
         CTxDestination destination = DecodeDestination("TKCQwhtJAgMnF7PUr8UuPXy2VfSeJunfjG");

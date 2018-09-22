@@ -89,7 +89,15 @@ public:
         }
     }
     int GetBlockSubsidyChangeHeight() const { return blockSubsidyFork; }
-    int IsDevFeeBlock(int nHeight) const { return nHeight % 43200 == 0; }
+    int IsDevFeeBlock(int nHeight) const {
+        if(strNetworkID == CBaseChainParams::MAIN){
+            return nHeight % 43200 == 0;
+        } else if(strNetworkID == CBaseChainParams::REGTEST) {
+            return nHeight % 10 == 0;
+        } else {
+            return nHeight % 43200 == 0;
+        }
+    }
 protected:
     CChainParams() {}
 
