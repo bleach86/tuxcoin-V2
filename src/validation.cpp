@@ -1130,7 +1130,7 @@ bool ReadBlockFromDisk(CBlock& block, const CBlockIndex* pindex, const Consensus
     return true;
 }
 
-CAmount GetDonationSubsidy(int nHeight, const CChainParams& chainparams)
+CAmount GetDevSubsidy(int nHeight, const CChainParams& chainparams)
 {
     Consensus::Params consensusParams = chainparams.GetConsensus();
     int halvings = nHeight / consensusParams.nSubsidyHalvingInterval;
@@ -1984,8 +1984,8 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
 
     CAmount blockReward = nFees + GetBlockSubsidy(pindex->nHeight, chainparams);
 
-    if(chainparams.IsDevFeeBlock(pindex->nHeight)) {
-        CAmount nDonationAmount = GetDonationSubsidy(pindex->nHeight, chainparams);
+    if(chainparams.IsDevSubsidyBlock(pindex->nHeight)) {
+        CAmount nDonationAmount = GetDevSubsidy(pindex->nHeight, chainparams);
         CAmount nStandardAmount = blockReward;
         blockReward += nDonationAmount;
         const CTransaction &tx = *(block.vtx[0]);
@@ -2001,7 +2001,7 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
                                tx.vout[1].nValue, nDonationAmount),
                                REJECT_INVALID, "bad-cb-dev-amount");
 
-        CTxDestination destination = DecodeDestination(chainparams.DonationAddress());
+        CTxDestination destination = DecodeDestination(chainparams.DevAddress());
         if (!IsValidDestination(destination)) {
             throw std::runtime_error("invalid TX output address");
         }

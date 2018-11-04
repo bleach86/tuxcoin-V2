@@ -91,16 +91,17 @@ public:
         }
     }
     int GetBlockSubsidyChangeHeight() const { return blockSubsidyFork; }
-    int IsDevFeeBlock(int nHeight) const {
+    int IsDevSubsidyBlock(int nHeight) const {
         if(strNetworkID == CBaseChainParams::MAIN){
-            return nHeight % 43200 == 0;
+            // return nHeight % 43200 == 0;
+            return false;
         } else if(strNetworkID == CBaseChainParams::REGTEST) {
             return nHeight % 10 == 0;
         } else {
             return nHeight % 43200 == 0;
         }
     }
-    const std::string& DonationAddress() const { return strDonationAddress; }
+    const std::string& DevAddress() const { return strDevAddress; }
 protected:
     CChainParams() {}
 
@@ -120,7 +121,7 @@ protected:
     CCheckpointData checkpointData;
     ChainTxData chainTxData;
     int blockSubsidyFork;
-    std::string strDonationAddress;
+    std::string strDevAddress;
 };
 
 /**
