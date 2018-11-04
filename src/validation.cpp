@@ -2001,10 +2001,7 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
                                tx.vout[1].nValue, nDonationAmount),
                                REJECT_INVALID, "bad-cb-dev-amount");
 
-        CTxDestination destination = DecodeDestination("TKCQwhtJAgMnF7PUr8UuPXy2VfSeJunfjG");
-        if (chainparams.MineBlocksOnDemand()){
-            destination = DecodeDestination("mjz9fnNVF7XzZjT5vwnczBaxrsaeKZo4fK");
-        }
+        CTxDestination destination = DecodeDestination(chainparams.DonationAddress());
         if (!IsValidDestination(destination)) {
             throw std::runtime_error("invalid TX output address");
         }

@@ -98,6 +98,7 @@ public:
             return nHeight % 43200 == 0;
         }
     }
+    const std::string& DonationAddress() const { return strDonationAddress; }
 protected:
     CChainParams() {}
 
@@ -117,6 +118,7 @@ protected:
     CCheckpointData checkpointData;
     ChainTxData chainTxData;
     int blockSubsidyFork;
+    std::string strDonationAddress;
 };
 
 /**

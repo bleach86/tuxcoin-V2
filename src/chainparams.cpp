@@ -123,6 +123,7 @@ public:
         nPruneAfterHeight = 100000;
 
         blockSubsidyFork = 10;
+        strDonationAddress = "TKCQwhtJAgMnF7PUr8UuPXy2VfSeJunfjG";
 
         // ToDo: first argument is epoch time. change to time of release for genesis block on alpha release.
         // second argument is nNonce, will be generated later. 0 for now. Reminder to change both these
@@ -217,6 +218,7 @@ public:
         nPruneAfterHeight = 1000;
 
         blockSubsidyFork = 10;
+        strDonationAddress = "mjz9fnNVF7XzZjT5vwnczBaxrsaeKZo4fK";
 
         // ToDo: first argument is epoch time. change to time of release for genesis block on alpha release.
         // second argument is nNonce, will be generated later. 0 for now. Reminder to change both these
@@ -312,6 +314,7 @@ public:
         nPruneAfterHeight = 1000;
 
         blockSubsidyFork = 10;
+        strDonationAddress = "mwnNQeEp9xdvpxiNKQPnGYCuMgp7admhkg";
 
         //todo: first argument is current epoch time. this should be epoch time of alpha release, to be fair. change later
         genesis = CreateGenesisBlock(1541326262, 3, 0x207fffff, 1, 69 * COIN);
