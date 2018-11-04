@@ -218,7 +218,7 @@ public:
         nPruneAfterHeight = 1000;
 
         blockSubsidyFork = 10;
-        strDonationAddress = "mjz9fnNVF7XzZjT5vwnczBaxrsaeKZo4fK";
+        strDonationAddress = "mwnNQeEp9xdvpxiNKQPnGYCuMgp7admhkg";
 
         // ToDo: first argument is epoch time. change to time of release for genesis block on alpha release.
         // second argument is nNonce, will be generated later. 0 for now. Reminder to change both these

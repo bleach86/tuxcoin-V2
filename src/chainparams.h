@@ -84,6 +84,8 @@ public:
             return ALGO_ALLIUM;
         } else if(strNetworkID == CBaseChainParams::REGTEST && nHeight > 20){
             return ALGO_ALLIUM;
+        } else if(strNetworkID == CBaseChainParams::TESTNET && nHeight > 20){
+            return ALGO_ALLIUM;
         } else {
             return ALGO_SCRYPT;
         }
