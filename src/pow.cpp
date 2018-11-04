@@ -110,7 +110,7 @@ unsigned int GetNextWorkRequiredBTC(const CBlockIndex* pindexLast, const CBlockH
 
 unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock, const Consensus::Params& params)
 {
-    if(pindexLast->nHeight <= 15000){
+    if(pindexLast->nHeight <= params.nDiffForkHeight){
         return GetNextWorkRequiredBTC(pindexLast, pblock, params);
     }
     return DarkGravityWave(pindexLast, params);

@@ -85,6 +85,7 @@ public:
         consensus.nPowTargetSpacing = 60; // 60 seconds
         consensus.nOldPowTargetTimespan = 60;
         consensus.nOldPowTargetSpacing = 60;
+        consensus.nDiffForkHeight = 15000;
         consensus.fPowAllowMinDifficultyBlocks = false;
         consensus.fPowNoRetargeting = false;
         consensus.nRuleChangeActivationThreshold = 768; // 75% of 8064
@@ -183,6 +184,7 @@ public:
         consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.nPowTargetTimespan = 60 * 60; // every hour - irrelevant due to DGW
         consensus.nPowTargetSpacing = 10; // 10 seconds
+        consensus.nDiffForkHeight = 50;
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.fPowNoRetargeting = false;
         consensus.nRuleChangeActivationThreshold = 1512; // 75% for testchains
@@ -279,6 +281,9 @@ public:
         consensus.powLimit = uint256S("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.nPowTargetTimespan = 1.4 * 24 * 60 * 60; // 1.4 days
         consensus.nPowTargetSpacing = 1 * 60; // 60 seconds
+        consensus.nOldPowTargetTimespan = 60;
+        consensus.nOldPowTargetSpacing = 60;
+        consensus.nDiffForkHeight = 2;
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.fPowNoRetargeting = true;
         consensus.nRuleChangeActivationThreshold = 108; // 75% for testchains
@@ -299,19 +304,19 @@ public:
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x00");
 
-        pchMessageStart[0] = 0xfa;
-        pchMessageStart[1] = 0xbf;
-        pchMessageStart[2] = 0xb5;
-        pchMessageStart[3] = 0xda;
-        nDefaultPort = 19444;
+        pchMessageStart[0] = 0xf3;
+        pchMessageStart[1] = 0xc2;
+        pchMessageStart[2] = 0xb1;
+        pchMessageStart[3] = 0xdf;
+        nDefaultPort = 42075;
         nPruneAfterHeight = 1000;
 
         blockSubsidyFork = 10;
 
         //todo: first argument is current epoch time. this should be epoch time of alpha release, to be fair. change later
-        genesis = CreateGenesisBlock(1529196619, 388550749, 0x1e0ffff0, 1, 69 * COIN);
+        genesis = CreateGenesisBlock(1541326262, 3, 0x207fffff, 1, 69 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x279f0fda784164aebbface8db434a8801748be987edb585d8025e58379d1b54f"));
+        assert(consensus.hashGenesisBlock == uint256S("0x40c46e498b3ff50400c9bdd62d2a471365c627fe3f267120dd3ddc5a7a7ef255"));
         assert(genesis.hashMerkleRoot == uint256S("0x3ead103523ad8f9bfc8365c7b5ddb6f10c731c6274730e88bcaa2c74606dd4bb"));
 
         vFixedSeeds.clear(); //!< Regtest mode doesn't have any fixed seeds.
@@ -324,13 +329,13 @@ public:
 
         checkpointData = {
             {
-                //{0, uint256S("530827f38f93b43ed12af0b3ad25a288dc02ed74d6d7857862df51fc56c416f9")},
+                {0, uint256S("0x40c46e498b3ff50400c9bdd62d2a471365c627fe3f267120dd3ddc5a7a7ef255")},
             }
         };
 
         chainTxData = ChainTxData{
-            1529196619,
-            1,
+            0,
+            0,
             0
         };
 

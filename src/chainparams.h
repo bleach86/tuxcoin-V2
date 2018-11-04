@@ -82,7 +82,7 @@ public:
     int GetPoWAlgo(int nHeight) const {
         if(strNetworkID == CBaseChainParams::MAIN && nHeight > 15000){
             return ALGO_ALLIUM;
-        } else if(strNetworkID == CBaseChainParams::TESTNET && nHeight > 20){
+        } else if(strNetworkID == CBaseChainParams::REGTEST && nHeight > 20){
             return ALGO_ALLIUM;
         } else {
             return ALGO_SCRYPT;

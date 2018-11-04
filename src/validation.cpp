@@ -1157,10 +1157,6 @@ CAmount GetBlockSubsidy(int nHeight, const CChainParams& chainparams)
     if (nHeight == 1)
         blockSize = 69;
 
-    if(chainparams.IsDevFeeBlock(nHeight)) {
-        blockSize += GetDonationSubsidy(nHeight, chainparams);
-    }
-
 	// Adjust block size to 69 coins per block
     CAmount nSubsidy = blockSize * COIN;
 
@@ -1987,15 +1983,11 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
     LogPrint(BCLog::BENCH, "      - Connect %u transactions: %.2fms (%.3fms/tx, %.3fms/txin) [%.2fs (%.2fms/blk)]\n", (unsigned)block.vtx.size(), MILLI * (nTime3 - nTime2), MILLI * (nTime3 - nTime2) / block.vtx.size(), nInputs <= 1 ? 0 : MILLI * (nTime3 - nTime2) / (nInputs-1), nTimeConnect * MICRO, nTimeConnect * MILLI / nBlocksTotal);
 
     CAmount blockReward = nFees + GetBlockSubsidy(pindex->nHeight, chainparams);
-    if (block.vtx[0]->GetValueOut() > blockReward)
-        return state.DoS(100,
-                         error("ConnectBlock(): coinbase pays too much (actual=%d vs limit=%d)",
-                               block.vtx[0]->GetValueOut(), blockReward),
-                               REJECT_INVALID, "bad-cb-amount");
-    // TODO: Validate dev fee goes to correct address
+
     if(chainparams.IsDevFeeBlock(pindex->nHeight)) {
         CAmount nDonationAmount = GetDonationSubsidy(pindex->nHeight, chainparams);
-        CAmount nStandardAmount = blockReward - nDonationAmount;
+        CAmount nStandardAmount = blockReward;
+        blockReward += nDonationAmount;
         const CTransaction &tx = *(block.vtx[0]);
         if(tx.vout[0].nValue > nStandardAmount)
             return state.DoS(100,
@@ -2010,6 +2002,9 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
                                REJECT_INVALID, "bad-cb-dev-amount");
 
         CTxDestination destination = DecodeDestination("TKCQwhtJAgMnF7PUr8UuPXy2VfSeJunfjG");
+        if (chainparams.MineBlocksOnDemand()){
+            destination = DecodeDestination("mjz9fnNVF7XzZjT5vwnczBaxrsaeKZo4fK");
+        }
         if (!IsValidDestination(destination)) {
             throw std::runtime_error("invalid TX output address");
         }
@@ -2021,6 +2016,11 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
                                REJECT_INVALID, "bad-cb-dev-address");
     }
 
+    if (block.vtx[0]->GetValueOut() > blockReward)
+        return state.DoS(100,
+                         error("ConnectBlock(): coinbase pays too much (actual=%d vs limit=%d)",
+                               block.vtx[0]->GetValueOut(), blockReward),
+                               REJECT_INVALID, "bad-cb-amount");
     if (!control.Wait())
         return state.DoS(100, error("%s: CheckQueue failed", __func__), REJECT_INVALID, "block-validation-failed");
     int64_t nTime4 = GetTimeMicros(); nTimeVerify += nTime4 - nTime2;
