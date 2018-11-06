@@ -35,7 +35,7 @@ ADD ./bin /usr/local/bin
 
 VOLUME ["/root/.tuxcoin"]
 
-EXPOSE 42071 42075 42072 142072
+EXPOSE 42071 42075 42072
 
 WORKDIR /root/.tuxcoin
 
