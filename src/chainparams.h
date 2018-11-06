@@ -91,11 +91,14 @@ public:
         }
     }
     int GetBlockSubsidyChangeHeight() const { return blockSubsidyFork; }
-    int IsDevSubsidyBlock(int nHeight) const {
+    bool IsDevSubsidyBlock(int nHeight) const {
+        if(nHeight < GetBlockSubsidyChangeHeight()) {
+            return false;
+        }
         if(strNetworkID == CBaseChainParams::MAIN){
             // return nHeight % 43200 == 0;
             return false;
-        } else if(strNetworkID == CBaseChainParams::REGTEST) {
+        } else if(strNetworkID == CBaseChainParams::REGTEST || strNetworkID == CBaseChainParams::TESTNET) {
             return nHeight % 10 == 0;
         } else {
             return nHeight % 43200 == 0;

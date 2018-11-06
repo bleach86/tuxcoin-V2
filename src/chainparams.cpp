@@ -185,7 +185,9 @@ public:
         consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.nPowTargetTimespan = 60 * 60; // every hour - irrelevant due to DGW
         consensus.nPowTargetSpacing = 10; // 10 seconds
-        consensus.nDiffForkHeight = 50;
+        consensus.nOldPowTargetTimespan = 60;
+        consensus.nOldPowTargetSpacing = 60;
+        consensus.nDiffForkHeight = 10;
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.fPowNoRetargeting = false;
         consensus.nRuleChangeActivationThreshold = 1512; // 75% for testchains
@@ -217,7 +219,7 @@ public:
         nDefaultPort = 42075;
         nPruneAfterHeight = 1000;
 
-        blockSubsidyFork = 10;
+        blockSubsidyFork = 20;
         strDevAddress = "mwnNQeEp9xdvpxiNKQPnGYCuMgp7admhkg";
 
         // ToDo: first argument is epoch time. change to time of release for genesis block on alpha release.
@@ -253,15 +255,14 @@ public:
         checkpointData = (CCheckpointData) {
             {
                 {0, uint256S("0x279f0fda784164aebbface8db434a8801748be987edb585d8025e58379d1b54f")},
-                {11500, uint256S("0xd7152d207d6e7b010d3e740fa5d41a9f0b480b6826ad7c3d5c7b04d3c5f3865b")},
             }
         };
 
         chainTxData = ChainTxData{
             // Data as of block 3351b6229da00b47ad7a8d7e1323b0e2874744b5296e3d6448293463ab758624 (height 153489)
-            1529196619,
             0,
-            0.00
+            0,
+            0
         };
 
     }
