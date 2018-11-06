@@ -2006,10 +2006,15 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
             throw std::runtime_error("invalid TX output address");
         }
         CScript scriptPubKey = GetScriptForDestination(destination);
-        if(HexStr(tx.vout[1].scriptPubKey) != HexStr(scriptPubKey))
+        bool found = false;
+        for (unsigned int i = 1; i < tx.vout.size(); i++) {
+            if(HexStr(tx.vout[1].scriptPubKey) == HexStr(scriptPubKey)) {
+                found = true;
+            }
+        }
+        if(!found)
             return state.DoS(100,
-                         error("ConnectBlock(): coinbase dev fee address incorrect (actual=%s vs expected=%s)",
-                               HexStr(tx.vout[1].scriptPubKey), HexStr(scriptPubKey)),
+                         error("ConnectBlock(): could not find dev payment address in coinbase vout"),
                                REJECT_INVALID, "bad-cb-dev-address");
     }
 

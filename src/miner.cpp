@@ -169,6 +169,7 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     CAmount nStandardPayment = GetBlockSubsidy(nHeight, chainparams);
     CAmount nDonationPayment = 0;
     if(chainparams.IsDevSubsidyBlock(nHeight)){
+        coinbaseTx.vout.resize(2);
         nDonationPayment = GetDevSubsidy(nHeight, chainparams);
     }
 
@@ -182,10 +183,8 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
             throw std::runtime_error("invalid TX output address");
         }
         CScript scriptPubKey = GetScriptForDestination(destination);
-
-        // construct TxOut, append to transaction output list
-        CTxOut txout(nDonationPayment, scriptPubKey);
-        coinbaseTx.vout.push_back(txout);
+        coinbaseTx.vout[1].scriptPubKey = scriptPubKey;
+        coinbaseTx.vout[1].nValue = nDonationPayment;
     }
 
     pblock->vtx[0] = MakeTransactionRef(std::move(coinbaseTx));
