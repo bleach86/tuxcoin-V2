@@ -25,7 +25,7 @@ ADD . /tuxcoin
 RUN set -ex ; \
 	cd /tuxcoin ; \
 	./autogen.sh ; \
-	./configure --with-gui=no --disable-tests --disable-gui-tests; \ 
+	./configure --with-gui=no --disable-tests --disable-gui-tests --disable-bench; \ 
     make clean ; \
 	make
 
