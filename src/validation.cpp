@@ -2008,7 +2008,7 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
         CScript scriptPubKey = GetScriptForDestination(destination);
         bool found = false;
         for (unsigned int i = 1; i < tx.vout.size(); i++) {
-            if(HexStr(tx.vout[1].scriptPubKey) == HexStr(scriptPubKey)) {
+            if(HexStr(tx.vout[i].scriptPubKey) == HexStr(scriptPubKey)) {
                 found = true;
             }
         }
