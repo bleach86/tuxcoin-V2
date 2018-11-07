@@ -1995,12 +1995,6 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
                                tx.vout[0].nValue, nStandardAmount),
                                REJECT_INVALID, "bad-cb-miner-amount");
 
-        if(tx.vout[1].nValue > nDonationAmount)
-            return state.DoS(100,
-                         error("ConnectBlock(): coinbase pays dev too much (actual=%d vs limit=%d)",
-                               tx.vout[1].nValue, nDonationAmount),
-                               REJECT_INVALID, "bad-cb-dev-amount");
-
         CTxDestination destination = DecodeDestination(chainparams.DevAddress());
         if (!IsValidDestination(destination)) {
             throw std::runtime_error("invalid TX output address");
@@ -2010,6 +2004,12 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
         for (unsigned int i = 1; i < tx.vout.size(); i++) {
             if(HexStr(tx.vout[i].scriptPubKey) == HexStr(scriptPubKey)) {
                 found = true;
+                if(tx.vout[i].nValue != nDonationAmount)
+                    return state.DoS(100,
+                                error("ConnectBlock(): coinbase does not pay exact amount (actual=%d vs expected=%d)",
+                                    tx.vout[1].nValue, nDonationAmount),
+                                    REJECT_INVALID, "bad-cb-dev-amount");
+                break;
             }
         }
         if(!found)
