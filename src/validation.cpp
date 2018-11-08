@@ -2007,7 +2007,7 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
                 if(tx.vout[i].nValue != nDonationAmount)
                     return state.DoS(100,
                                 error("ConnectBlock(): coinbase does not pay exact amount (actual=%d vs expected=%d)",
-                                    tx.vout[1].nValue, nDonationAmount),
+                                    tx.vout[i].nValue, nDonationAmount),
                                     REJECT_INVALID, "bad-cb-dev-amount");
                 break;
             }
