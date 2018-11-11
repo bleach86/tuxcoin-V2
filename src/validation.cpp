@@ -1130,9 +1130,8 @@ bool ReadBlockFromDisk(CBlock& block, const CBlockIndex* pindex, const Consensus
     return true;
 }
 
-CAmount GetDevSubsidy(int nHeight, const CChainParams& chainparams)
+CAmount GetDevSubsidy(int nHeight, const Consensus::Params& consensusParams)
 {
-    Consensus::Params consensusParams = chainparams.GetConsensus();
     int halvings = nHeight / consensusParams.nSubsidyHalvingInterval;
     // Force block reward to zero when right shift is undefined.
     if (halvings >= 64)
@@ -1145,9 +1144,8 @@ CAmount GetDevSubsidy(int nHeight, const CChainParams& chainparams)
     return nSubsidy;
 }
 
-CAmount GetBlockSubsidy(int nHeight, const CChainParams& chainparams)
+CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
 {
-    Consensus::Params consensusParams = chainparams.GetConsensus();
     int halvings = nHeight / consensusParams.nSubsidyHalvingInterval;
     // Force block reward to zero when right shift is undefined.
     if (halvings >= 64)
@@ -1982,10 +1980,10 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
     int64_t nTime3 = GetTimeMicros(); nTimeConnect += nTime3 - nTime2;
     LogPrint(BCLog::BENCH, "      - Connect %u transactions: %.2fms (%.3fms/tx, %.3fms/txin) [%.2fs (%.2fms/blk)]\n", (unsigned)block.vtx.size(), MILLI * (nTime3 - nTime2), MILLI * (nTime3 - nTime2) / block.vtx.size(), nInputs <= 1 ? 0 : MILLI * (nTime3 - nTime2) / (nInputs-1), nTimeConnect * MICRO, nTimeConnect * MILLI / nBlocksTotal);
 
-    CAmount blockReward = nFees + GetBlockSubsidy(pindex->nHeight, chainparams);
+    CAmount blockReward = nFees + GetBlockSubsidy(pindex->nHeight, chainparams.GetConsensus());
 
     if(chainparams.IsDevSubsidyBlock(pindex->nHeight)) {
-        CAmount nDonationAmount = GetDevSubsidy(pindex->nHeight, chainparams);
+        CAmount nDonationAmount = GetDevSubsidy(pindex->nHeight, chainparams.GetConsensus());
         CAmount nStandardAmount = blockReward;
         blockReward += nDonationAmount;
         const CTransaction &tx = *(block.vtx[0]);
@@ -2007,7 +2005,7 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
                 if(tx.vout[i].nValue != nDonationAmount)
                     return state.DoS(100,
                                 error("ConnectBlock(): coinbase does not pay exact amount (actual=%d vs expected=%d)",
-                                    tx.vout[1].nValue, nDonationAmount),
+                                    tx.vout[i].nValue, nDonationAmount),
                                     REJECT_INVALID, "bad-cb-dev-amount");
                 break;
             }

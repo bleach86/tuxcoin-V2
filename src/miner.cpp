@@ -166,11 +166,11 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     coinbaseTx.vout.resize(1);
     // TODO: Add payment to dev fee if dev fee block
 
-    CAmount nStandardPayment = GetBlockSubsidy(nHeight, chainparams);
+    CAmount nStandardPayment = GetBlockSubsidy(nHeight, chainparams.GetConsensus());
     CAmount nDonationPayment = 0;
     if(chainparams.IsDevSubsidyBlock(nHeight)){
         coinbaseTx.vout.resize(2);
-        nDonationPayment = GetDevSubsidy(nHeight, chainparams);
+        nDonationPayment = GetDevSubsidy(nHeight, chainparams.GetConsensus());
     }
 
     coinbaseTx.vout[0].scriptPubKey = scriptPubKeyIn;

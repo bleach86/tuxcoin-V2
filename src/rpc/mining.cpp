@@ -678,7 +678,7 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
 
     const CChainParams& chainparams = Params();
     if(chainparams.IsDevSubsidyBlock(pindexPrev->nHeight+1)){
-        CAmount nDonationPayment = GetDevSubsidy(pindexPrev->nHeight+1, chainparams);
+        CAmount nDonationPayment = GetDevSubsidy(pindexPrev->nHeight+1, chainparams.GetConsensus());
         result.push_back(Pair("donation_amount", (int64_t) nDonationPayment));
         result.push_back(Pair("donation_payee", chainparams.DevAddress()));
     }
