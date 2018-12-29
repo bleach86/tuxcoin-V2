@@ -122,7 +122,7 @@ public:
         nDefaultPort = 42071;
         nPruneAfterHeight = 100000;
 
-        blockSubsidyFork = 10;
+        blockSubsidyFork = 302401;
         strDevAddress = "TKCQwhtJAgMnF7PUr8UuPXy2VfSeJunfjG";
 
         // ToDo: first argument is epoch time. change to time of release for genesis block on alpha release.

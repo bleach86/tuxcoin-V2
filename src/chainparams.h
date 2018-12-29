@@ -96,8 +96,7 @@ public:
             return false;
         }
         if(strNetworkID == CBaseChainParams::MAIN){
-            // return nHeight % 43200 == 0;
-            return false;
+            return nHeight % 43200 == 0;
         } else if(strNetworkID == CBaseChainParams::REGTEST || strNetworkID == CBaseChainParams::TESTNET) {
             return nHeight % 10 == 0;
         } else {
