@@ -122,8 +122,8 @@ public:
         nDefaultPort = 42071;
         nPruneAfterHeight = 100000;
 
-        blockSubsidyFork = 302401;
-        strDevAddress = "TKCQwhtJAgMnF7PUr8UuPXy2VfSeJunfjG";
+        blockSubsidyFork = 302401; // 302401 so the donation subsidy does not occur at 302300
+        strDevAddress = "SuAhWocDrp7z6kF8YiuJpE3FTnc3bDR4AC";
 
         // ToDo: first argument is epoch time. change to time of release for genesis block on alpha release.
         // second argument is nNonce, will be generated later. 0 for now. Reminder to change both these
@@ -220,7 +220,7 @@ public:
         nPruneAfterHeight = 1000;
 
         blockSubsidyFork = 20;
-        strDevAddress = "mmcmh8uEwfmCMgcdYmbAugEiJXH6wBKDsX";
+        strDevAddress = "QT8VW2vEfNfAJDk6RfmCN16WupUXmCXEiw";
 
         // ToDo: first argument is epoch time. change to time of release for genesis block on alpha release.
         // second argument is nNonce, will be generated later. 0 for now. Reminder to change both these
@@ -315,7 +315,7 @@ public:
         nPruneAfterHeight = 1000;
 
         blockSubsidyFork = 10;
-        strDevAddress = "mwnNQeEp9xdvpxiNKQPnGYCuMgp7admhkg";
+        strDevAddress = "QT8VW2vEfNfAJDk6RfmCN16WupUXmCXEiw";
 
         //todo: first argument is current epoch time. this should be epoch time of alpha release, to be fair. change later
         genesis = CreateGenesisBlock(1541326262, 3, 0x207fffff, 1, 69 * COIN);
