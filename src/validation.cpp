@@ -1152,6 +1152,8 @@ CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
         return 0;
 
     int blockSize = 69;
+    if(nHeight >= 302400)
+        blockSize = 67;
     if (nHeight == 1)
         blockSize = 69;
 
