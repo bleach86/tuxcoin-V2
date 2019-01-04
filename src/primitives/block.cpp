@@ -10,8 +10,8 @@
 #include <utilstrencodings.h>
 #include <crypto/common.h>
 #include <crypto/scrypt.h>
-#include <chainparams.h>
 #include <crypto/allium/allium.h>
+#include <chainparams.h>
 
 uint256 CBlockHeader::GetHash() const
 {
