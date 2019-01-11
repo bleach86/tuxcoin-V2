@@ -361,8 +361,10 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
             "  \"sizelimit\" : n,                  (numeric) limit of block size\n"
             "  \"weightlimit\" : n,                (numeric) limit of block weight\n"
             "  \"curtime\" : ttt,                  (numeric) current timestamp in seconds since epoch (Jan 1 1970 GMT)\n"
-            "  \"bits\" : \"xxxxxxxx\",              (string) compressed target of next block\n"
+            "  \"bits\" : \"xxxxxxxx\",            (string) compressed target of next block\n"
             "  \"height\" : n                      (numeric) The height of the next block\n"
+            "  \"donation_payee\" : \"xxxx\"       (string) Donation \n"
+            "  \"donation_payee\" : n              (numeric) The height of the next block\n"
             "}\n"
 
             "\nExamples:\n"
@@ -673,6 +675,13 @@ UniValue getblocktemplate(const JSONRPCRequest& request)
     result.push_back(Pair("curtime", pblock->GetBlockTime()));
     result.push_back(Pair("bits", strprintf("%08x", pblock->nBits)));
     result.push_back(Pair("height", (int64_t)(pindexPrev->nHeight+1)));
+
+    const CChainParams& chainparams = Params();
+    if(chainparams.IsDevSubsidyBlock(pindexPrev->nHeight+1)){
+        CAmount nDonationPayment = GetDevSubsidy(pindexPrev->nHeight+1, chainparams.GetConsensus());
+        result.push_back(Pair("donation_amount", (int64_t) nDonationPayment));
+        result.push_back(Pair("donation_payee", chainparams.DevAddress()));
+    }
 
     if (!pblocktemplate->vchCoinbaseCommitment.empty() && fSupportsSegwit) {
         result.push_back(Pair("default_witness_commitment", HexStr(pblocktemplate->vchCoinbaseCommitment.begin(), pblocktemplate->vchCoinbaseCommitment.end())));

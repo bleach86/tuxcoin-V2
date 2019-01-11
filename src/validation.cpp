@@ -6,6 +6,7 @@
 #include <validation.h>
 
 #include <arith_uint256.h>
+#include <base58.h>
 #include <chain.h>
 #include <chainparams.h>
 #include <checkpoints.h>
@@ -1129,6 +1130,20 @@ bool ReadBlockFromDisk(CBlock& block, const CBlockIndex* pindex, const Consensus
     return true;
 }
 
+CAmount GetDevSubsidy(int nHeight, const Consensus::Params& consensusParams)
+{
+    int halvings = nHeight / consensusParams.nSubsidyHalvingInterval;
+    // Force block reward to zero when right shift is undefined.
+    if (halvings >= 64)
+        return 0;
+
+    CAmount nSubsidy = 86400 * COIN;
+
+    // Subsidy is cut in half every 210,000 blocks which will occur approximately every 4 years.
+    nSubsidy >>= halvings;
+    return nSubsidy;
+}
+
 CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
 {
     int halvings = nHeight / consensusParams.nSubsidyHalvingInterval;
@@ -1136,10 +1151,12 @@ CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
     if (halvings >= 64)
         return 0;
 
-int blockSize = 69;        
+    int blockSize = 69;
+    if(nHeight >= 302400)
+        blockSize = 67;
     if (nHeight == 1)
         blockSize = 69;
-        
+
 	// Adjust block size to 69 coins per block
     CAmount nSubsidy = blockSize * COIN;
 
@@ -1966,12 +1983,46 @@ bool CChainState::ConnectBlock(const CBlock& block, CValidationState& state, CBl
     LogPrint(BCLog::BENCH, "      - Connect %u transactions: %.2fms (%.3fms/tx, %.3fms/txin) [%.2fs (%.2fms/blk)]\n", (unsigned)block.vtx.size(), MILLI * (nTime3 - nTime2), MILLI * (nTime3 - nTime2) / block.vtx.size(), nInputs <= 1 ? 0 : MILLI * (nTime3 - nTime2) / (nInputs-1), nTimeConnect * MICRO, nTimeConnect * MILLI / nBlocksTotal);
 
     CAmount blockReward = nFees + GetBlockSubsidy(pindex->nHeight, chainparams.GetConsensus());
+
+    if(chainparams.IsDevSubsidyBlock(pindex->nHeight)) {
+        CAmount nDonationAmount = GetDevSubsidy(pindex->nHeight, chainparams.GetConsensus());
+        CAmount nStandardAmount = blockReward;
+        blockReward += nDonationAmount;
+        const CTransaction &tx = *(block.vtx[0]);
+        if(tx.vout[0].nValue > nStandardAmount)
+            return state.DoS(100,
+                         error("ConnectBlock(): coinbase pays miner too much (actual=%d vs limit=%d)",
+                               tx.vout[0].nValue, nStandardAmount),
+                               REJECT_INVALID, "bad-cb-miner-amount");
+
+        CTxDestination destination = DecodeDestination(chainparams.DevAddress());
+        if (!IsValidDestination(destination)) {
+            throw std::runtime_error("invalid TX output address");
+        }
+        CScript scriptPubKey = GetScriptForDestination(destination);
+        bool found = false;
+        for (unsigned int i = 1; i < tx.vout.size(); i++) {
+            if(HexStr(tx.vout[i].scriptPubKey) == HexStr(scriptPubKey)) {
+                found = true;
+                if(tx.vout[i].nValue != nDonationAmount)
+                    return state.DoS(100,
+                                error("ConnectBlock(): coinbase does not pay exact amount (actual=%d vs expected=%d)",
+                                    tx.vout[i].nValue, nDonationAmount),
+                                    REJECT_INVALID, "bad-cb-dev-amount");
+                break;
+            }
+        }
+        if(!found)
+            return state.DoS(100,
+                         error("ConnectBlock(): could not find dev payment address in coinbase vout"),
+                               REJECT_INVALID, "bad-cb-dev-address");
+    }
+
     if (block.vtx[0]->GetValueOut() > blockReward)
         return state.DoS(100,
                          error("ConnectBlock(): coinbase pays too much (actual=%d vs limit=%d)",
                                block.vtx[0]->GetValueOut(), blockReward),
                                REJECT_INVALID, "bad-cb-amount");
-
     if (!control.Wait())
         return state.DoS(100, error("%s: CheckQueue failed", __func__), REJECT_INVALID, "block-validation-failed");
     int64_t nTime4 = GetTimeMicros(); nTimeVerify += nTime4 - nTime2;
@@ -3015,7 +3066,7 @@ bool CheckBlock(const CBlock& block, CValidationState& state, const Consensus::P
 
     // Check transactions
     for (const auto& tx : block.vtx)
-        if (!CheckTransaction(*tx, state, false))
+        if (!CheckTransaction(*tx, state, true))
             return state.Invalid(false, state.GetRejectCode(), state.GetRejectReason(),
                                  strprintf("Transaction check failed (tx hash %s) %s", tx->GetHash().ToString(), state.GetDebugMessage()));
 

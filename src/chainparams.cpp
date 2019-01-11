@@ -85,6 +85,7 @@ public:
         consensus.nPowTargetSpacing = 60; // 60 seconds
         consensus.nOldPowTargetTimespan = 60;
         consensus.nOldPowTargetSpacing = 60;
+        consensus.nDiffForkHeight = 15000;
         consensus.fPowAllowMinDifficultyBlocks = false;
         consensus.fPowNoRetargeting = false;
         consensus.nRuleChangeActivationThreshold = 768; // 75% of 8064
@@ -121,6 +122,9 @@ public:
         nDefaultPort = 42071;
         nPruneAfterHeight = 100000;
 
+        blockSubsidyFork = 302401; // 302401 so the donation subsidy does not occur at 302300
+        strDevAddress = "SuAhWocDrp7z6kF8YiuJpE3FTnc3bDR4AC";
+
         // ToDo: first argument is epoch time. change to time of release for genesis block on alpha release.
         // second argument is nNonce, will be generated later. 0 for now. Reminder to change both these
         genesis = CreateGenesisBlock(1529196636, 2085541870, 0x1e0ffff0, 1, 69 * COIN);
@@ -153,6 +157,7 @@ public:
             {
                 {  0, uint256S("0xcf7938a048f1442dd34f87ce56d3e25455b22a44f676325f1ae8c7a33d0731c7")},
                 {  11500, uint256S("0xd7152d207d6e7b010d3e740fa5d41a9f0b480b6826ad7c3d5c7b04d3c5f3865b")},
+                {  258762, uint256S("0x2a16a8f10497bea50a92d1e9c6cbb9f13ccb563ca87010ba0790733e2df4f06e")},
             }
         };
 
@@ -173,7 +178,7 @@ class CTestNetParams : public CChainParams {
 public:
     CTestNetParams() {
         strNetworkID = "test";
-        consensus.nSubsidyHalvingInterval = 420690;
+        consensus.nSubsidyHalvingInterval = 150;
         consensus.BIP34Height = 0;
         consensus.BIP34Hash = uint256S("279f0fda784164aebbface8db434a8801748be987edb585d8025e58379d1b54f");
         consensus.BIP65Height = 0; // 8075c771ed8b495ffd943980a95f702ab34fce3c8c54e379548bda33cc8c0573
@@ -181,6 +186,9 @@ public:
         consensus.powLimit = uint256S("00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.nPowTargetTimespan = 60 * 60; // every hour - irrelevant due to DGW
         consensus.nPowTargetSpacing = 10; // 10 seconds
+        consensus.nOldPowTargetTimespan = 60;
+        consensus.nOldPowTargetSpacing = 60;
+        consensus.nDiffForkHeight = 10;
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.fPowNoRetargeting = false;
         consensus.nRuleChangeActivationThreshold = 1512; // 75% for testchains
@@ -211,6 +219,9 @@ public:
         pchMessageStart[3] = 0xdf;
         nDefaultPort = 42075;
         nPruneAfterHeight = 1000;
+
+        blockSubsidyFork = 20;
+        strDevAddress = "QT8VW2vEfNfAJDk6RfmCN16WupUXmCXEiw";
 
         // ToDo: first argument is epoch time. change to time of release for genesis block on alpha release.
         // second argument is nNonce, will be generated later. 0 for now. Reminder to change both these
@@ -245,15 +256,14 @@ public:
         checkpointData = (CCheckpointData) {
             {
                 {0, uint256S("0x279f0fda784164aebbface8db434a8801748be987edb585d8025e58379d1b54f")},
-                {11500, uint256S("0xd7152d207d6e7b010d3e740fa5d41a9f0b480b6826ad7c3d5c7b04d3c5f3865b")},
             }
         };
 
         chainTxData = ChainTxData{
             // Data as of block 3351b6229da00b47ad7a8d7e1323b0e2874744b5296e3d6448293463ab758624 (height 153489)
-            1529196619,
             0,
-            0.00
+            0,
+            0
         };
 
     }
@@ -275,6 +285,9 @@ public:
         consensus.powLimit = uint256S("7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
         consensus.nPowTargetTimespan = 1.4 * 24 * 60 * 60; // 1.4 days
         consensus.nPowTargetSpacing = 1 * 60; // 60 seconds
+        consensus.nOldPowTargetTimespan = 60;
+        consensus.nOldPowTargetSpacing = 60;
+        consensus.nDiffForkHeight = 2;
         consensus.fPowAllowMinDifficultyBlocks = true;
         consensus.fPowNoRetargeting = true;
         consensus.nRuleChangeActivationThreshold = 108; // 75% for testchains
@@ -295,17 +308,20 @@ public:
         // By default assume that the signatures in ancestors of this block are valid.
         consensus.defaultAssumeValid = uint256S("0x00");
 
-        pchMessageStart[0] = 0xfa;
-        pchMessageStart[1] = 0xbf;
-        pchMessageStart[2] = 0xb5;
-        pchMessageStart[3] = 0xda;
-        nDefaultPort = 19444;
+        pchMessageStart[0] = 0xf3;
+        pchMessageStart[1] = 0xc2;
+        pchMessageStart[2] = 0xb1;
+        pchMessageStart[3] = 0xdf;
+        nDefaultPort = 42075;
         nPruneAfterHeight = 1000;
 
+        blockSubsidyFork = 10;
+        strDevAddress = "QT8VW2vEfNfAJDk6RfmCN16WupUXmCXEiw";
+
         //todo: first argument is current epoch time. this should be epoch time of alpha release, to be fair. change later
-        genesis = CreateGenesisBlock(1515002093, 388550749, 0x1e0ffff0, 1, 69 * COIN);
+        genesis = CreateGenesisBlock(1541326262, 3, 0x207fffff, 1, 69 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x279f0fda784164aebbface8db434a8801748be987edb585d8025e58379d1b54f"));
+        assert(consensus.hashGenesisBlock == uint256S("0x40c46e498b3ff50400c9bdd62d2a471365c627fe3f267120dd3ddc5a7a7ef255"));
         assert(genesis.hashMerkleRoot == uint256S("0x3ead103523ad8f9bfc8365c7b5ddb6f10c731c6274730e88bcaa2c74606dd4bb"));
 
         vFixedSeeds.clear(); //!< Regtest mode doesn't have any fixed seeds.
@@ -318,13 +334,13 @@ public:
 
         checkpointData = {
             {
-                //{0, uint256S("530827f38f93b43ed12af0b3ad25a288dc02ed74d6d7857862df51fc56c416f9")},
+                {0, uint256S("0x40c46e498b3ff50400c9bdd62d2a471365c627fe3f267120dd3ddc5a7a7ef255")},
             }
         };
 
         chainTxData = ChainTxData{
-            1515002093,
-            1,
+            0,
+            0,
             0
         };
 
@@ -334,7 +350,7 @@ public:
         base58Prefixes[EXT_PUBLIC_KEY] = {0x04, 0x35, 0x87, 0xCF};
         base58Prefixes[EXT_SECRET_KEY] = {0x04, 0x35, 0x83, 0x94};
 
-        //bech32_hrp = "rgrlc";
+        bech32_hrp = "rtux";
     }
 };
 
