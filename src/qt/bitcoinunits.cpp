@@ -42,7 +42,7 @@ QString BitcoinUnits::longName(int unit)
     {
     case BTC: return QString("TUX");
     case mBTC: return QString("mTUX");
-    case uBTC: return QString("cloves");
+    case uBTC: return QString("sats");
     default: return QString("???");
     }
 }
@@ -62,7 +62,7 @@ QString BitcoinUnits::description(int unit)
     {
     case BTC: return QString("Tuxcoins");
     case mBTC: return QString("mTUX (1 / 1" THIN_SP_UTF8 "000)");
-    case uBTC: return QString("Cloves (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
+    case uBTC: return QString("Sats (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
     default: return QString("???");
     }
 }
